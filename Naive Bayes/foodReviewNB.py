@@ -28,7 +28,7 @@ pGood = np.zeros(len(vecWords))
 pBad = np.zeros(len(vecWords))
 
 vectors = np.zeros((12,len(vecWords)));
-reviews = np.random.choice(allReviews, size=12, replace=False);
+
 
 i =0;
 nGood=0;
