@@ -18,7 +18,7 @@ for i in range(len(allReviews)):
     for w in temp:
         if (w == "1") or (w == "-1"):
             continue;
-        if w not in vecWords:
+        if (w not in vecWords) and (len(w) > 2):
             vecWords.append(w);
 
 
@@ -28,7 +28,7 @@ pGood = np.zeros(len(vecWords))
 pBad = np.zeros(len(vecWords))
 
 vectors = np.zeros((12,len(vecWords)));
-
+reviews = np.random.choice(allReviews, size=12, replace=False);
 
 i =0;
 nGood=0;
@@ -79,8 +79,8 @@ def encodeVector(s):
 def calcAgivenB(a, b):
     total = 1;
     for index,j in enumerate(a):
-        # if (b[index] == 0):
-        #     b[index] = 1/(nGood+2)
+        if (b[index] == 0):
+            b[index] = 1/(nGood+2)
         if (j == 1):
             
             total = total*b[index]
