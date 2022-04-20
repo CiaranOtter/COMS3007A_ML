@@ -27,16 +27,20 @@ for i in range(3):
 y_values = np.zeros(150)
 
 def f(x, theta):
-    return theta[0]+theta[1]*x+theta[2]*x*x
+    out = 0
+    for i in range(len(theta)):
+        out += theta[i]*(x**i)
+    return out
 
 for i, d in enumerate(design_matrix):
     y_values[i] = f(x_values[i],theta)+np.random.normal(loc=0, scale=8, size=1)
 
 # ----- (v) -----
 
-def PlotScatter(theta, x):
+def PlotScatter(theta, theta_grad, x):
     plt.scatter(x_values, y_values)
     plt.plot(x[:,1], f(x[:,1],theta), "r")
+    plt.plot(x[:,1], f(x[:,1], theta_grad), "g")
     plt.show()
 
 
@@ -90,26 +94,36 @@ print(Error(trained))
 
 x_train = design_matrix[design_matrix[:,1].argsort()]
 
-PlotScatter(trained, x_train)
 
 # ----- (iv) -----
 
 def Gradient_Decent():
-    alpha = 0.01
-    xi = 0
-    theta_curr = np.random.rand(3)
-    theta_old = np.zeros(3)
+    alpha = 0.0000001
+    e = 10**-6
 
-    while (np.linalg.norm(theta_curr-theta_old) > 0.001):
-        theta_old = theta_curr
-        y_pred = f(x_values, theta_old)
-        print(y_pred)
-        print(alpha*(-y_values)*design_matrix[:,0])
-        theta_curr[0] = theta_old[0] - alpha*(f(x_values, theta_old)-y_values)*design_matrix[:,0]
-        theta_curr[1] = theta_old[1] - alpha*(f(x_values, theta_old)-y_values)*design_matrix[:,1]
-        theta_curr[2] = theta_old[2] - alpha*(f(x_values, theta_old)-y_values)*design_matrix[:,2]
+    theta_new = np.zeros(3)
+    theta_old = np.random.uniform(0,1,3)
 
+    while (np.linalg.norm(abs(theta_old-theta_new),2) > e):
+        theta_new = theta_old
+        theta_new[0] = theta_new[0] - Partial_Derivative(alpha,0, theta_old)
+        theta_new[1] = theta_new[1] - Partial_Derivative(alpha, 1, theta_old)
+        theta_new[2] = theta_new[2] - Partial_Derivative(alpha, 2, theta_old)
+    
+    return theta_new
+    
 
-        print(theta_curr)
+def Partial_Derivative(alpha, i, theta):
+    err = 0;
+    for j,y in enumerate(y_values):
+        y_hat = f(x_values[j], theta)
+        err += alpha*(y_hat - y)*(x_values[j]**i)
+        
+    return err
 
-Gradient_Decent()
+print(theta)
+print(trained)
+gradient = Gradient_Decent()
+print(gradient)
+
+PlotScatter(trained, gradient, x_train)
