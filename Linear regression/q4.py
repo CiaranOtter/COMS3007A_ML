@@ -12,7 +12,7 @@ x_values = np.random.normal(loc=0, scale=10, size=150)
 
 # ----- (ii) -----
 
-# compute the design matrix for the model
+    # compute the design matrix for the model
 
 design_matrix = np.ones((len(x_values), 3))
 for i,x in enumerate(x_values):
@@ -249,7 +249,7 @@ plt.show()
 # lambda set to 0.3 
 
 gradient_reg, ts, te = Gradient_Decent(4, 0.000000001, 10**(-6), 0.3)
-print("Third Order gradient descent (no regularization): ")
+print("Third Order gradient descent with regularization: ")
 print("------------------------------------------------\n")
 
 # -----[4b] (ii) {third order gradient descent with regularization} -----
@@ -281,38 +281,4 @@ plt.show()
 plt.plot(ts[:100:], te[:100:], "y")
 plt.title("plot for training error for regression model over time ")
 plt.show()
-    
-#     def Partial_Derivative_regularised(alpha, i, theta, l):
-#         err = 0;
-#         for j,d in enumerate(training):
-#             y_hat = f(d[0], theta)
-#             err += alpha*(y_hat - d[1])*(d[0]**i)
 
-#         return err + alpha*l*theta[i]
-
-#     def Gradient_Decent_Regularised():
-#         alpha = 0.00000000001
-#         e = 10**(-5)
-#         l = 0.3
-
-#         theta_old = np.zeros(4)
-#         theta_new = np.random.uniform(0,1,4)
-#         while (np.linalg.norm(abs(theta_old-theta_new),2) >= e):
-#             for i in range(4):
-#                 theta_old[i] = theta_new[i]
-#                 pDer = Partial_Derivative_regularised(alpha, i, theta_old, l)
-#                 theta_new[i] = theta_new[i] - pDer
-    
-#             # time_step = np.append(time_step,index)
-#             # index = index +1
-#             # if (index%20 == 0):
-#             #     training_error = np.append(training_error,Error(theta_new))
-    
-#         return theta_new;
-
-    
-#     cubic_theta = Gradient_Decent_Regularised()
-#     PlotScatter(trained, gradient, cubic_theta, x_train)
-
-
-# Regularisation()
