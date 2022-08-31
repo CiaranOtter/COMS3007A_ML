@@ -1,4 +1,5 @@
 import random
+import re
 
 with open("simple-food-reviews.txt") as f:
     lines = f.readlines();
@@ -11,10 +12,7 @@ bad = 0;
 conf = [];
 
 trainingData = random.sample(lines, int(len(lines)*0.6));
-print(lines)
-print(len(trainingData))
 testing_data = list(set(lines) - set(trainingData))
-print(len(testing_data))
 
 
 def findStats(line,conf, good, bad):
@@ -44,7 +42,7 @@ def findStats(line,conf, good, bad):
             obj = {
                 "word": lineArr[i],
                 "good": 0,
-                "bad":0,
+                "bad": 0,
                 "count": 0
             }
             obj = incGoodBad(obj, isGood)
@@ -67,8 +65,7 @@ for i in range(len(trainingData)):
     good, bad = findStats(trainingData[i], conf,good, bad)
 
 
-def testALine(line):
-    print("running a test for a line on the models")
+def testALine(line, conf):
 
     line = line.replace("\n", "");
     line = line.split(' ');
@@ -96,14 +93,23 @@ def testALine(line):
         if (conf[i]["word"] in line):
             binary[i] = 1;
 
-    print(line)
-    print(binary)
     findProbability(binary)
         
+
+def laplaceSmooth(conf):
+    for i in conf:
+        if (i["good"] == 0 or i["bad"] == 0):
+            i["good"] += 1;
+            i["bad"] += 1;
+            i["count"] += 2;
+
+    return conf;
 
 def findProbability(binaryStr):
     probGood = 1;
     probBad = 1;
+
+    # conf = laplaceSmooth(conf);
     for i in range(len(conf)):
         if (binaryStr[i] == 1):
             probGood = probGood*(conf[i]["good"]/conf[i]["count"]);
@@ -112,11 +118,21 @@ def findProbability(binaryStr):
             probGood = probGood * (1 - (conf[i]["good"]/conf[i]["count"]));
             probBad = probBad * (1 - (conf[i]["bad"]/conf[i]["count"]));
 
-    print(good, bad)
-    print(probGood, probBad)
     givenGood = (probGood *good)/( (probGood*good) + (probBad*bad) )
+    givenBad = 1 - givenGood;
+    # Ciaran you are a a dumb-ass sometimes
 
-    print(givenGood)
+    results = False;
+    if (givenGood > givenBad):
+        results = True;
 
-print(conf)
-testALine(testing_data[1])
+    return results;
+
+conf = laplaceSmooth(conf);
+
+print(testing_data[1])
+
+if (testALine(testing_data[1], conf)):
+    print("good review")
+else:
+    print("bad reveiw");
